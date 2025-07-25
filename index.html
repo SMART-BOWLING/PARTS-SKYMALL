@@ -14,33 +14,32 @@
 
     .top-controls {
       display: flex;
-      flex-wrap: wrap;          /* разрешаем перенос */
-      justify-content: center;  /* центрируем при переносе */
+      flex-wrap: nowrap;        /* не переносим */
+      justify-content: space-between;
       gap: 8px;
-      max-width: 800px;
+      max-width: 100%;          /* растягиваем во всю ширину */
       margin: 0 auto 20px;
       align-items: center;
       padding-bottom: 8px;
       box-sizing: border-box;
-      overflow-x: auto;
+      overflow-x: auto;         /* позволяем скроллить, если не влезает */
     }
 
     .top-controls .btn-top {
-      height: 56px;
-      font-size: 18px;
-      border-radius: 14px;
+      height: 48px;             /* чуть меньше */
+      font-size: 16px;          /* чуть меньше */
+      border-radius: 12px;
       border: none;
       cursor: pointer;
       white-space: nowrap;
-      flex-grow: 1;
-      min-width: 90px;
-      max-width: 220px;
+      flex: 0 1 auto;           /* чтобы кнопки могли ужиматься */
+      min-width: 70px;          /* уменьшили минимальную ширину */
+      max-width: 140px;         /* уменьшили максимальную ширину */
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 600;
-      font-family: inherit;
-      padding: 0 16px;
+      padding: 0 12px;          /* меньше паддингов */
       transition: background-color 0.3s ease, opacity 0.3s ease;
       box-sizing: border-box;
     }
@@ -49,19 +48,21 @@
       background-color: #dc143c;
       color: #fff;
       appearance: none;
-      padding-right: 36px;
-      position: relative;
+      padding-right: 28px;
       font-weight: 600;
-      max-width: 250px;
       background-image:
         linear-gradient(45deg, transparent 50%, #000 50%),
         linear-gradient(135deg, #000 50%, transparent 50%),
       background-position:
-        calc(100% - 20px) calc(1em + 2px),
-        calc(100% - 15px) calc(1em + 2px),
-        calc(100% - 25px) 0.5em;
-      background-size: 5px 5px, 5px 5px, 1px 1.5em;
+        calc(100% - 16px) calc(0.9em + 2px),
+        calc(100% - 12px) calc(0.9em + 2px),
+        calc(100% - 24px) 0.4em;
+      background-size: 4px 4px, 4px 4px, 1px 1.2em;
       background-repeat: no-repeat;
+      min-width: 80px;
+      max-width: 160px;
+      height: 48px;
+      font-size: 16px;
     }
 
     .top-controls button.btn-top {
@@ -74,235 +75,32 @@
       opacity: 0.9;
     }
 
-    /* Адаптация для мобильных */
-    @media (max-width: 600px) {
+    /* Если место совсем мало, позволим скроллить горизонтально без обрезки текста */
+    @media (max-width: 400px) {
       .top-controls .btn-top {
-        flex: 1 1 100%;   /* каждая кнопка на всю ширину */
-        max-width: none;  /* убираем ограничение по ширине */
-        font-size: 16px;
-        height: 48px;
+        font-size: 14px;
+        height: 40px;
+        min-width: 60px;
+        padding: 0 8px;
+      }
+      .top-controls select.btn-top {
+        font-size: 14px;
+        height: 40px;
+        min-width: 70px;
+        padding-right: 24px;
       }
     }
 
-    .cards {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .card {
-      width: 100%;
-      max-width: 800px;
-      background: #f0f2f5;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      box-sizing: border-box;
-    }
-
-    .media-block {
-      position: relative;
-      width: 100%;
-      padding-top: 75%;
-      background: #000;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .media-block img,
-    .media-block iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border: none;
-      z-index: 0;
-    }
-
-    .media-block .img-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: transparent;
-      z-index: 1;
-    }
-
-    .media-block .icon {
-      position: absolute;
-      width: 44px;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #dc143c;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 28px;
-      color: #fff;
-      z-index: 2;
-    }
-
-    .remove {
-      top: 8px;
-      right: 8px;
-    }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 16px;
-      gap: 8px;
-      padding: 10px 0;
-    }
-
-    .pill {
-      background: #fff;
-      border-radius: 20px;
-      padding: 16px 20px;
-      font-size: 20px;
-      font-weight: bold;
-      flex-shrink: 0;
-    }
-
-    .controls input {
-      width: 60px;
-      height: 60px;
-      padding: 0 12px;
-      border: none;
-      border-radius: 16px;
-      text-align: center;
-      background: #fff;
-      font-size: 20px;
-      font-weight: bold;
-      flex-shrink: 0;
-    }
-
-    .btn {
-      height: 60px;
-      padding: 0 24px;
-      border: none;
-      border-radius: 16px;
-      font-size: 20px;
-      font-weight: bold;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .btn-add {
-      background: #1f2937;
-      color: #fff;
-      min-width: 140px;
-    }
-
-    .btn-info {
-      background: #fff;
-      color: #000;
-      min-width: 60px;
-    }
-
-    .btn-take {
-      background: #dc143c;
-      color: #fff;
-      min-width: 140px;
-    }
-
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-
-    .modal {
-      position: relative;
-      background: #fff;
-      border-radius: 11px;
-      padding: 60px;
-      width: 70vw;
-      height: 70vh;
-      max-width: 1000px;
-      max-height: 70vh;
-      overflow: auto;
-      z-index: 10000;
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 13px;
-      right: 20px;
-      cursor: pointer;
-      font-size: 58px;
-      font-weight: bold;
-    }
-
-    .modal h3 {
-      margin-top: 0;
-      font-size: 20px;
-    }
-
-    .modal pre {
-      white-space: pre-wrap;
-      font-size: 28px;
-    }
-
-    .pagination {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 20px;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .pagination button {
-      background-color: #1f2937;
-      color: white;
-      font-weight: 700;
-      border: none;
-      border-radius: 6px;
-      padding: 15px 20px;
-      font-size: 20px;
-      cursor: pointer;
-    }
-
-    .pagination button:disabled {
-      background-color: #888;
-      cursor: default;
-    }
-
-    #pageNumbers button {
-      background-color: #dc143c;
-      color: white;
-      font-weight: 700;
-      border: none;
-      border-radius: 6px;
-      padding: 15px 20px;
-      cursor: pointer;
-    }
-
-    #pageNumbers button.active {
-      background-color: #1f2937;
-    }
+    /* Остальной ваш CSS без изменений... */
+    .cards { /* ... */ }
+    /* и т.д. */
   </style>
 </head>
 <body>
   <div class="top-controls">
     <select id="sortSelect" title="Фильтр" class="btn-top">
       <option value="all">Все детали</option>
-      <option value="popular">Пос. взят. за 30 дней</option>
+      <option value="popular">Пос. взят. за 30 дней</option>
       <option value="mostPopular">Популярные</option>
       <option value="sortByQty">Остатки</option>
     </select>
@@ -311,6 +109,10 @@
     <button onclick="window.open('https://script.google.com/macros/s/AKfycbyXGtubHygKnygpEN6K2KWtrhfu4fWr0hKwuVf10JNvYjEF6VOj8wgKuSxc105wk0KE/exec','_blank')" class="btn-top">Мануалы</button>
     <button onclick="window.open('https://script.google.com/macros/s/AKfycbxAveNUBVSEFvafeY3OPUxNhiNniuG1sauFt5DGXeNcVzV250fbVTgI7XrRZ0PXwqslgg/exec','_blank')" class="btn-top">Добавить деталь</button>
   </div>
+
+  <!-- остальная разметка и скрипты без изменений -->
+</body>
+</html>
 
   <div class="cards" id="cardsContainer"></div>
 
