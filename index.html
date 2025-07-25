@@ -14,33 +14,30 @@
 
     .top-controls {
       display: flex;
-      flex-wrap: nowrap;        /* не переносим */
+      flex-wrap: nowrap;         /* оставляем в одну строку */
       justify-content: space-between;
       gap: 8px;
-      max-width: 100%;          /* растягиваем во всю ширину */
+      width: 100%;
+      max-width: 800px;
       margin: 0 auto 20px;
       align-items: center;
       padding-bottom: 8px;
       box-sizing: border-box;
-      overflow-x: auto;         /* позволяем скроллить, если не влезает */
     }
 
     .top-controls .btn-top {
-      height: 48px;             /* чуть меньше */
-      font-size: 16px;          /* чуть меньше */
-      border-radius: 12px;
+      height: 56px;
+      font-size: 18px;
+      border-radius: 14px;
       border: none;
       cursor: pointer;
       white-space: nowrap;
-      flex: 0 1 auto;           /* чтобы кнопки могли ужиматься */
-      min-width: 70px;          /* уменьшили минимальную ширину */
-      max-width: 140px;         /* уменьшили максимальную ширину */
+      flex: 0 0 calc((100% - 4 * 8px) / 5); /* ровно 5 кнопок в ряд */
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 600;
-      padding: 0 12px;          /* меньше паддингов */
-      transition: background-color 0.3s ease, opacity 0.3s ease;
+      padding: 0 8px;
       box-sizing: border-box;
     }
 
@@ -52,17 +49,14 @@
       font-weight: 600;
       background-image:
         linear-gradient(45deg, transparent 50%, #000 50%),
-        linear-gradient(135deg, #000 50%, transparent 50%),
+        linear-gradient(135deg, #000 50%, transparent 50%);
       background-position:
         calc(100% - 16px) calc(0.9em + 2px),
-        calc(100% - 12px) calc(0.9em + 2px),
-        calc(100% - 24px) 0.4em;
-      background-size: 4px 4px, 4px 4px, 1px 1.2em;
+        calc(100% - 12px) calc(0.9em + 2px);
+      background-size: 4px 4px, 4px 4px;
       background-repeat: no-repeat;
-      min-width: 80px;
-      max-width: 160px;
-      height: 48px;
-      font-size: 16px;
+      height: 56px;
+      font-size: 18px;
     }
 
     .top-controls button.btn-top {
@@ -75,25 +69,35 @@
       opacity: 0.9;
     }
 
-    /* Если место совсем мало, позволим скроллить горизонтально без обрезки текста */
-    @media (max-width: 400px) {
+    @media (max-width: 600px) {
       .top-controls .btn-top {
-        font-size: 14px;
-        height: 40px;
-        min-width: 60px;
-        padding: 0 8px;
+        height: 48px;
+        font-size: 16px;
+        flex: 0 0 calc((100% - 4 * 6px) / 5); /* учесть меньшие gap */
+        gap: 6px;
       }
-      .top-controls select.btn-top {
-        font-size: 14px;
-        height: 40px;
-        min-width: 70px;
-        padding-right: 24px;
+      .top-controls {
+        gap: 6px;
       }
     }
 
-    /* Остальной ваш CSS без изменений... */
-    .cards { /* ... */ }
-    /* и т.д. */
+    /* --- остальной ваш CSS без изменений --- */
+    .cards {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .card {
+      width: 100%;
+      max-width: 800px;
+      background: #f0f2f5;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      box-sizing: border-box;
+    }
+    /* ... media-block, controls, modal, pagination и т.д. */
   </style>
 </head>
 <body>
@@ -109,10 +113,6 @@
     <button onclick="window.open('https://script.google.com/macros/s/AKfycbyXGtubHygKnygpEN6K2KWtrhfu4fWr0hKwuVf10JNvYjEF6VOj8wgKuSxc105wk0KE/exec','_blank')" class="btn-top">Мануалы</button>
     <button onclick="window.open('https://script.google.com/macros/s/AKfycbxAveNUBVSEFvafeY3OPUxNhiNniuG1sauFt5DGXeNcVzV250fbVTgI7XrRZ0PXwqslgg/exec','_blank')" class="btn-top">Добавить деталь</button>
   </div>
-
-  <!-- остальная разметка и скрипты без изменений -->
-</body>
-</html>
 
   <div class="cards" id="cardsContainer"></div>
 
