@@ -14,8 +14,8 @@
 
     .top-controls {
       display: flex;
-      flex-wrap: nowrap;
-      justify-content: space-between; /* равномерно распределяем */
+      flex-wrap: wrap;          /* разрешаем перенос */
+      justify-content: center;  /* центрируем при переносе */
       gap: 8px;
       max-width: 800px;
       margin: 0 auto 20px;
@@ -26,15 +26,15 @@
     }
 
     .top-controls .btn-top {
-      height: 56px;        /* большая высота */
+      height: 56px;
       font-size: 18px;
       border-radius: 14px;
       border: none;
       cursor: pointer;
       white-space: nowrap;
-      flex-grow: 1;        /* кнопки растягиваются */
-      min-width: 90px;     /* минимальная ширина */
-      max-width: 220px;    /* максимальная ширина */
+      flex-grow: 1;
+      min-width: 90px;
+      max-width: 220px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -53,6 +53,15 @@
       position: relative;
       font-weight: 600;
       max-width: 250px;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #000 50%),
+        linear-gradient(135deg, #000 50%, transparent 50%),
+      background-position:
+        calc(100% - 20px) calc(1em + 2px),
+        calc(100% - 15px) calc(1em + 2px),
+        calc(100% - 25px) 0.5em;
+      background-size: 5px 5px, 5px 5px, 1px 1.5em;
+      background-repeat: no-repeat;
     }
 
     .top-controls button.btn-top {
@@ -65,17 +74,14 @@
       opacity: 0.9;
     }
 
-    /* Стрелочка для селекта */
-    .top-controls select.btn-top {
-      background-image:
-        linear-gradient(45deg, transparent 50%, #000 50%),
-        linear-gradient(135deg, #000 50%, transparent 50%),
-      background-position:
-        calc(100% - 20px) calc(1em + 2px),
-        calc(100% - 15px) calc(1em + 2px),
-        calc(100% - 25px) 0.5em;
-      background-size: 5px 5px, 5px 5px, 1px 1.5em;
-      background-repeat: no-repeat;
+    /* Адаптация для мобильных */
+    @media (max-width: 600px) {
+      .top-controls .btn-top {
+        flex: 1 1 100%;   /* каждая кнопка на всю ширину */
+        max-width: none;  /* убираем ограничение по ширине */
+        font-size: 16px;
+        height: 48px;
+      }
     }
 
     .cards {
@@ -268,7 +274,7 @@
       border: none;
       border-radius: 6px;
       padding: 15px 20px;
-      font-size: 20px; 
+      font-size: 20px;
       cursor: pointer;
     }
 
@@ -293,288 +299,289 @@
   </style>
 </head>
 <body>
-<div class="top-controls">
-  <select id="sortSelect" title="Фильтр" class="btn-top">
-    <option value="all">Все детали</option>
-    <option value="popular">Пос. взят. за 30 дней</option>
-    <option value="mostPopular">Популярные</option>
-    <option value="sortByQty">Остатки</option>
-  </select>
-  <button id="btnSearch" class="btn-top">Поиск</button>
-  <button onclick="resetSearch()" class="btn-top">Сбросить</button>
-  <button onclick="window.open('https://script.google.com/macros/s/AKfycbyXGtubHygKnygpEN6K2KWtrhfu4fWr0hKwuVf10JNvYjEF6VOj8wgKuSxc105wk0KE/exec', '_blank')" class="btn-top">Мануалы</button>
-  <button onclick="window.open('https://script.google.com/macros/s/AKfycbxAveNUBVSEFvafeY3OPUxNhiNniuG1sauFt5DGXeNcVzV250fbVTgI7XrRZ0PXwqslgg/exec', '_blank')" class="btn-top">Добавить деталь</button>
-</div>
-
-<div class="cards" id="cardsContainer"></div>
-
-<div class="pagination">
-  <button onclick="prevPage()" id="prevBtn" disabled>← Назад</button>
-  <div id="pageNumbers" style="display: flex; gap: 10px;"></div>
-  <button onclick="nextPage()" id="nextBtn">Вперёд →</button>
-</div>
-
-<div id="modalOverlay" class="modal-overlay">
-  <div class="modal">
-    <div id="modalClose" class="modal-close">×</div>
-    <h3>История изменений</h3>
-    <pre id="modalContent"></pre>
+  <div class="top-controls">
+    <select id="sortSelect" title="Фильтр" class="btn-top">
+      <option value="all">Все детали</option>
+      <option value="popular">Пос. взят. за 30 дней</option>
+      <option value="mostPopular">Популярные</option>
+      <option value="sortByQty">Остатки</option>
+    </select>
+    <button id="btnSearch" class="btn-top">Поиск</button>
+    <button onclick="resetSearch()" class="btn-top">Сбросить</button>
+    <button onclick="window.open('https://script.google.com/macros/s/AKfycbyXGtubHygKnygpEN6K2KWtrhfu4fWr0hKwuVf10JNvYjEF6VOj8wgKuSxc105wk0KE/exec','_blank')" class="btn-top">Мануалы</button>
+    <button onclick="window.open('https://script.google.com/macros/s/AKfycbxAveNUBVSEFvafeY3OPUxNhiNniuG1sauFt5DGXeNcVzV250fbVTgI7XrRZ0PXwqslgg/exec','_blank')" class="btn-top">Добавить деталь</button>
   </div>
-</div>
 
-<script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbzs-oyvJNIWohXoCjdu_0Iw2jArkP7ZTYN_2yylm8TK829wKmWoSTrN3LdiHQwoxrwe1A/exec"; // Замените на актуальный URL скрипта Apps Script
+  <div class="cards" id="cardsContainer"></div>
 
-  let allEntries = [];
-  let currentEntries = [];
-  let currentPage = 1;
-  const cardsPerPage = 5;
+  <div class="pagination">
+    <button onclick="prevPage()" id="prevBtn" disabled>← Назад</button>
+    <div id="pageNumbers" style="display: flex; gap: 10px;"></div>
+    <button onclick="nextPage()" id="nextBtn">Вперёд →</button>
+  </div>
 
-  async function getEntries() {
-    const res = await fetch(`${API_URL}?action=getEntries`);
-    return await res.json();
-  }
+  <div id="modalOverlay" class="modal-overlay">
+    <div class="modal">
+      <div id="modalClose" class="modal-close">×</div>
+      <h3>История изменений</h3>
+      <pre id="modalContent"></pre>
+    </div>
+  </div>
 
-  async function updateQuantity(partNumber, delta) {
-    const res = await fetch(`${API_URL}?action=updateQuantity&partNumber=${encodeURIComponent(partNumber)}&delta=${delta}`);
-    return await res.json();
-  }
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzs-oyvJNIWohXoCjdu_0Iw2jArkP7ZTYN_2yylm8TK829wKmWoSTrN3LdiHQwoxrwe1A/exec";
 
-  async function deleteEntry(rowIndex) {
-    const res = await fetch(`${API_URL}?action=deleteEntry&rowIndex=${rowIndex}`);
-    return await res.json();
-  }
+    let allEntries = [];
+    let currentEntries = [];
+    let currentPage = 1;
+    const cardsPerPage = 5;
 
-  async function getHistory(partNumber) {
-    const res = await fetch(`${API_URL}?action=getHistory&partNumber=${encodeURIComponent(partNumber)}`);
-    return await res.text();
-  }
-
-  async function getPopularEntries() {
-    const res = await fetch(`${API_URL}?action=getPopularEntries`);
-    return await res.json();
-  }
-
-  async function getMostPopularEntries() {
-    const res = await fetch(`${API_URL}?action=getMostPopularEntries`);
-    return await res.json();
-  }
-
-  function createCard(entry) {
-    const div = document.createElement('div');
-    div.className = 'card';
-    div.dataset.row = entry.rowIndex;
-    div.dataset.partNumber = entry.partNumber.toLowerCase();
-
-    const media = document.createElement('div');
-    media.className = 'media-block';
-
-    if (entry.fileUrl && entry.fileUrl.includes('/preview')) {
-      const iframe = document.createElement('iframe');
-      iframe.src = entry.fileUrl;
-      media.appendChild(iframe);
-    } else if (entry.fileUrl) {
-      const img = document.createElement('img');
-      img.src = entry.fileUrl;
-      media.appendChild(img);
+    async function getEntries() {
+      const res = await fetch(`${API_URL}?action=getEntries`);
+      return await res.json();
     }
 
-    const overlay = document.createElement('div');
-    overlay.className = 'img-overlay';
-    media.appendChild(overlay);
+    async function updateQuantity(partNumber, delta) {
+      const res = await fetch(`${API_URL}?action=updateQuantity&partNumber=${encodeURIComponent(partNumber)}&delta=${delta}`);
+      return await res.json();
+    }
 
-    const rem = document.createElement('div');
-    rem.className = 'icon remove';
-    rem.textContent = 'Х';
-    media.append(rem);
+    async function deleteEntry(rowIndex) {
+      const res = await fetch(`${API_URL}?action=deleteEntry&rowIndex=${rowIndex}`);
+      return await res.json();
+    }
 
-    div.append(media);
+    async function getHistory(partNumber) {
+      const res = await fetch(`${API_URL}?action=getHistory&partNumber=${encodeURIComponent(partNumber)}`);
+      return await res.text();
+    }
 
-    const controls = document.createElement('div');
-    controls.className = 'controls';
+    async function getPopularEntries() {
+      const res = await fetch(`${API_URL}?action=getPopularEntries`);
+      return await res.json();
+    }
 
-    const pill = document.createElement('div');
-    pill.className = 'pill';
-    pill.textContent = entry.partNumber;
+    async function getMostPopularEntries() {
+      const res = await fetch(`${API_URL}?action=getMostPopularEntries`);
+      return await res.json();
+    }
 
-    const qtyInput = document.createElement('input');
-    qtyInput.type = 'text';
-    qtyInput.value = entry.quantity;
-    qtyInput.readOnly = true;
+    function createCard(entry) {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.dataset.row = entry.rowIndex;
+      div.dataset.partNumber = entry.partNumber.toLowerCase();
 
-    const btnAdd = document.createElement('button');
-    btnAdd.className = 'btn btn-add';
-    btnAdd.textContent = 'ДОБАВИТЬ';
+      const media = document.createElement('div');
+      media.className = 'media-block';
 
-    const btnInfo = document.createElement('button');
-    btnInfo.className = 'btn btn-info';
-    btnInfo.textContent = 'ИСТОРИЯ';
+      if (entry.fileUrl && entry.fileUrl.includes('/preview')) {
+        const iframe = document.createElement('iframe');
+        iframe.src = entry.fileUrl;
+        media.appendChild(iframe);
+      } else if (entry.fileUrl) {
+        const img = document.createElement('img');
+        img.src = entry.fileUrl;
+        media.appendChild(img);
+      }
 
-    const btnTake = document.createElement('button');
-    btnTake.className = 'btn btn-take';
-    btnTake.textContent = 'ВЗЯТЬ';
+      const overlay = document.createElement('div');
+      overlay.className = 'img-overlay';
+      media.appendChild(overlay);
 
-    controls.append(pill, qtyInput, btnAdd, btnInfo, btnTake);
-    div.append(controls);
+      const rem = document.createElement('div');
+      rem.className = 'icon remove';
+      rem.textContent = 'Х';
+      media.append(rem);
 
-    rem.onclick = async () => {
-      if (confirm('Удалить эту запись?')) {
-        await deleteEntry(entry.rowIndex);
-        allEntries = allEntries.filter(e => e.rowIndex !== entry.rowIndex);
-        currentEntries = currentEntries.filter(e => e.rowIndex !== entry.rowIndex);
-        const totalPages = Math.ceil(currentEntries.length / cardsPerPage) || 1;
-        if (currentPage > totalPages) currentPage = totalPages;
+      div.append(media);
+
+      const controls = document.createElement('div');
+      controls.className = 'controls';
+
+      const pill = document.createElement('div');
+      pill.className = 'pill';
+      pill.textContent = entry.partNumber;
+
+      const qtyInput = document.createElement('input');
+      qtyInput.type = 'text';
+      qtyInput.value = entry.quantity;
+      qtyInput.readOnly = true;
+
+      const btnAdd = document.createElement('button');
+      btnAdd.className = 'btn btn-add';
+      btnAdd.textContent = 'ДОБАВИТЬ';
+
+      const btnInfo = document.createElement('button');
+      btnInfo.className = 'btn btn-info';
+      btnInfo.textContent = 'ИСТОРИЯ';
+
+      const btnTake = document.createElement('button');
+      btnTake.className = 'btn btn-take';
+      btnTake.textContent = 'ВЗЯТЬ';
+
+      controls.append(pill, qtyInput, btnAdd, btnInfo, btnTake);
+      div.append(controls);
+
+      rem.onclick = async () => {
+        if (confirm('Удалить эту запись?')) {
+          await deleteEntry(entry.rowIndex);
+          allEntries = allEntries.filter(e => e.rowIndex !== entry.rowIndex);
+          currentEntries = currentEntries.filter(e => e.rowIndex !== entry.rowIndex);
+          const totalPages = Math.ceil(currentEntries.length / cardsPerPage) || 1;
+          if (currentPage > totalPages) currentPage = totalPages;
+          renderPage(currentPage);
+        }
+      };
+
+      btnAdd.onclick = async () => {
+        const deltaStr = prompt('Введите число для добавления:');
+        const delta = Number(deltaStr);
+        if (deltaStr !== null && !isNaN(delta)) {
+          const res = await updateQuantity(entry.partNumber, delta);
+          if (res.status === 'success') {
+            qtyInput.value = res.quantity;
+            entry.quantity = res.quantity;
+          } else {
+            alert(res.message);
+          }
+        }
+      };
+
+      btnTake.onclick = async () => {
+        const deltaStr = prompt('Введите число для вычитания:');
+        const delta = Number(deltaStr);
+        if (deltaStr !== null && !isNaN(delta)) {
+          const res = await updateQuantity(entry.partNumber, -delta);
+          if (res.status === 'success') {
+            qtyInput.value = res.quantity;
+            entry.quantity = res.quantity;
+          } else {
+            alert(res.message);
+          }
+        }
+      };
+
+      btnInfo.onclick = async () => {
+        const hist = await getHistory(entry.partNumber);
+        document.getElementById('modalContent').textContent = hist;
+        document.getElementById('modalOverlay').style.display = 'flex';
+      };
+
+      return div;
+    }
+
+    async function loadEntries() {
+      allEntries = await getEntries();
+      currentEntries = [...allEntries];
+      currentPage = 1;
+      renderPage(currentPage);
+    }
+
+    function renderPage(page) {
+      const container = document.getElementById('cardsContainer');
+      container.innerHTML = '';
+
+      const start = (page - 1) * cardsPerPage;
+      const end = start + cardsPerPage;
+      const pageData = currentEntries.slice(start, end);
+
+      pageData.forEach(e => container.appendChild(createCard(e)));
+
+      renderPageNumbers();
+      document.getElementById('prevBtn').disabled = (currentPage === 1);
+      document.getElementById('nextBtn').disabled = (currentPage * cardsPerPage >= currentEntries.length);
+      window.scrollTo(0, 0);
+    }
+
+    function renderPageNumbers() {
+      const pageContainer = document.getElementById('pageNumbers');
+      pageContainer.innerHTML = '';
+      const totalPages = Math.ceil(currentEntries.length / cardsPerPage) || 1;
+      let startPage = Math.max(currentPage - 2, 1);
+      let endPage = Math.min(startPage + 7, totalPages);
+      if (endPage - startPage < 7) startPage = Math.max(endPage - 7, 1);
+
+      for (let i = startPage; i <= endPage; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i;
+        if (i === currentPage) btn.classList.add('active');
+        btn.onclick = () => { currentPage = i; renderPage(currentPage); };
+        pageContainer.appendChild(btn);
+      }
+    }
+
+    function nextPage() {
+      if (currentPage * cardsPerPage < currentEntries.length) {
+        currentPage++;
         renderPage(currentPage);
       }
-    };
-
-    btnAdd.onclick = async () => {
-      const deltaStr = prompt('Введите число для добавления:');
-      const delta = Number(deltaStr);
-      if (deltaStr !== null && !isNaN(delta)) {
-        const res = await updateQuantity(entry.partNumber, delta);
-        if (res.status === 'success') {
-          qtyInput.value = res.quantity;
-          entry.quantity = res.quantity;
-        } else {
-          alert(res.message);
-        }
-      }
-    };
-
-    btnTake.onclick = async () => {
-      const deltaStr = prompt('Введите число для вычитания:');
-      const delta = Number(deltaStr);
-      if (deltaStr !== null && !isNaN(delta)) {
-        const res = await updateQuantity(entry.partNumber, -delta);
-        if (res.status === 'success') {
-          qtyInput.value = res.quantity;
-          entry.quantity = res.quantity;
-        } else {
-          alert(res.message);
-        }
-      }
-    };
-
-    btnInfo.onclick = async () => {
-      const hist = await getHistory(entry.partNumber);
-      document.getElementById('modalContent').textContent = hist;
-      document.getElementById('modalOverlay').style.display = 'flex';
-    };
-
-    return div;
-  }
-
-  async function loadEntries() {
-    allEntries = await getEntries();
-    currentEntries = [...allEntries];
-    currentPage = 1;
-    renderPage(currentPage);
-  }
-
-  function renderPage(page) {
-    const container = document.getElementById('cardsContainer');
-    container.innerHTML = '';
-
-    const start = (page - 1) * cardsPerPage;
-    const end = start + cardsPerPage;
-    const pageData = currentEntries.slice(start, end);
-
-    pageData.forEach(e => container.appendChild(createCard(e)));
-
-    renderPageNumbers();
-    document.getElementById('prevBtn').disabled = (currentPage === 1);
-    document.getElementById('nextBtn').disabled = (currentPage * cardsPerPage >= currentEntries.length);
-    window.scrollTo(0, 0);
-  }
-
-  function renderPageNumbers() {
-    const pageContainer = document.getElementById('pageNumbers');
-    pageContainer.innerHTML = '';
-    const totalPages = Math.ceil(currentEntries.length / cardsPerPage) || 1;
-    let startPage = Math.max(currentPage - 2, 1);
-    let endPage = Math.min(startPage + 7, totalPages);
-    if (endPage - startPage < 7) startPage = Math.max(endPage - 7, 1);
-
-    for (let i = startPage; i <= endPage; i++) {
-      const btn = document.createElement('button');
-      btn.textContent = i;
-      if (i === currentPage) btn.classList.add('active');
-      btn.onclick = () => { currentPage = i; renderPage(currentPage); };
-      pageContainer.appendChild(btn);
     }
-  }
 
-  function nextPage() {
-    if (currentPage * cardsPerPage < currentEntries.length) {
-      currentPage++;
-      renderPage(currentPage);
-    }
-  }
-
-  function prevPage() {
-    if (currentPage > 1) {
-      currentPage--;
-      renderPage(currentPage);
-    }
-  }
-
-  function resetSearch() {
-    currentEntries = [...allEntries];
-    currentPage = 1;
-    renderPage(currentPage);
-    document.getElementById('sortSelect').value = 'all';
-  }
-
-  document.getElementById('btnSearch').addEventListener('click', () => {
-    const term = prompt('Введите номер детали для поиска:');
-    if (term !== null) {
-      const searchTerm = term.toLowerCase().trim();
-      if (searchTerm.length === 0) {
-        currentEntries = [...allEntries];
-      } else {
-        currentEntries = allEntries.filter(e => e.partNumber.toLowerCase().includes(searchTerm));
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderPage(currentPage);
       }
+    }
+
+    function resetSearch() {
+      currentEntries = [...allEntries];
       currentPage = 1;
       renderPage(currentPage);
       document.getElementById('sortSelect').value = 'all';
     }
-  });
 
-  document.getElementById('sortSelect').addEventListener('change', async function() {
-    if (this.value === 'all') {
-      currentEntries = [...allEntries];
-      currentPage = 1;
-      renderPage(currentPage);
-    } else if (this.value === 'popular') {
-      const popularEntries = await getPopularEntries();
-      if (popularEntries && popularEntries.length > 0 && popularEntries[0].lastChangeDate) {
-        popularEntries.sort((a, b) => new Date(b.lastChangeDate) - new Date(a.lastChangeDate));
+    document.getElementById('btnSearch').addEventListener('click', () => {
+      const term = prompt('Введите номер детали для поиска:');
+      if (term !== null) {
+        const searchTerm = term.toLowerCase().trim();
+        if (searchTerm.length === 0) {
+          currentEntries = [...allEntries];
+        } else {
+          currentEntries = allEntries.filter(e => e.partNumber.toLowerCase().includes(searchTerm));
+        }
+        currentPage = 1;
+        renderPage(currentPage);
+        document.getElementById('sortSelect').value = 'all';
       }
-      currentEntries = popularEntries;
-      currentPage = 1;
-      renderPage(currentPage);
-    } else if (this.value === 'mostPopular') {
-      const mostPopularEntries = await getMostPopularEntries();
-      if (!mostPopularEntries || mostPopularEntries.length === 0) {
-        alert('Нет данных для сортировки "всё время"');
-        return;
+    });
+
+    document.getElementById('sortSelect').addEventListener('change', async function() {
+      if (this.value === 'all') {
+        currentEntries = [...allEntries];
+        currentPage = 1;
+        renderPage(currentPage);
+      } else if (this.value === 'popular') {
+        const popularEntries = await getPopularEntries();
+        if (popularEntries && popularEntries.length > 0 && popularEntries[0].lastChangeDate) {
+          popularEntries.sort((a, b) => new Date(b.lastChangeDate) - new Date(a.lastChangeDate));
+        }
+        currentEntries = popularEntries;
+        currentPage = 1;
+        renderPage(currentPage);
+      } else if (this.value === 'mostPopular') {
+        const mostPopularEntries = await getMostPopularEntries();
+        if (!mostPopularEntries || mostPopularEntries.length === 0) {
+          alert('Нет данных для сортировки "всё время"');
+          return;
+        }
+        currentEntries = mostPopularEntries;
+        currentPage = 1;
+        renderPage(currentPage);
+      } else if (this.value === 'sortByQty') {
+        currentEntries = [...allEntries].sort((a, b) => a.quantity - b.quantity);
+        currentPage = 1;
+        renderPage(currentPage);
       }
-      currentEntries = mostPopularEntries;
-      currentPage = 1;
-      renderPage(currentPage);
-    } else if (this.value === 'sortByQty') {
-      currentEntries = [...allEntries].sort((a, b) => a.quantity - b.quantity);
-      currentPage = 1;
-      renderPage(currentPage);
-    }
-  });
+    });
 
-  document.getElementById('modalClose').onclick = () => {
-    document.getElementById('modalOverlay').style.display = 'none';
-  };
+    document.getElementById('modalClose').onclick = () => {
+      document.getElementById('modalOverlay').style.display = 'none';
+    };
 
-  loadEntries();
-</script>
+    loadEntries();
+  </script>
 </body>
 </html>
+
