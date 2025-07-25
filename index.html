@@ -331,32 +331,32 @@
   const cardsPerPage = 5;
 
   async function getEntries() {
-    const res = await fetch(${API_URL}?action=getEntries);
+    const res = await fetch(`${API_URL}?action=getEntries`);
     return await res.json();
   }
 
   async function updateQuantity(partNumber, delta) {
-    const res = await fetch(${API_URL}?action=updateQuantity&partNumber=${encodeURIComponent(partNumber)}&delta=${delta});
+    const res = await fetch(`${API_URL}?action=updateQuantity&partNumber=${encodeURIComponent(partNumber)}&delta=${delta}`);
     return await res.json();
   }
 
   async function deleteEntry(rowIndex) {
-    const res = await fetch(${API_URL}?action=deleteEntry&rowIndex=${rowIndex});
+    const res = await fetch(`${API_URL}?action=deleteEntry&rowIndex=${rowIndex}`);
     return await res.json();
   }
 
   async function getHistory(partNumber) {
-    const res = await fetch(${API_URL}?action=getHistory&partNumber=${encodeURIComponent(partNumber)});
+    const res = await fetch(`${API_URL}?action=getHistory&partNumber=${encodeURIComponent(partNumber)}`);
     return await res.text();
   }
 
   async function getPopularEntries() {
-    const res = await fetch(${API_URL}?action=getPopularEntries);
+    const res = await fetch(`${API_URL}?action=getPopularEntries`);
     return await res.json();
   }
 
   async function getMostPopularEntries() {
-    const res = await fetch(${API_URL}?action=getMostPopularEntries);
+    const res = await fetch(`${API_URL}?action=getMostPopularEntries`);
     return await res.json();
   }
 
