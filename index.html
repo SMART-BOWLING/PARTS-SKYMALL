@@ -1363,12 +1363,15 @@
 
     // Инициализация событий
     document.getElementById('btnSearch')?.addEventListener('click', () => {
-      const term = prompt('Введите номер детали для поиска:');
+      const term = prompt('Введите номер детали или название для поиска:');
       if (term !== null) {
         const searchTerm = term.toLowerCase().trim();
         currentEntries = searchTerm.length === 0 
           ? [...allEntries] 
-          : allEntries.filter(e => e.partNumber.toLowerCase().includes(searchTerm));
+          : allEntries.filter(e => 
+              e.partNumber.toLowerCase().includes(searchTerm) || 
+              (e.partName && e.partName.toLowerCase().includes(searchTerm))
+            );
         updateTotalPages();
         currentPage = 1;
         renderPage(currentPage);
